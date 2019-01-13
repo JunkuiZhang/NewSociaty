@@ -1,4 +1,4 @@
-class entity:
+class Entity:
 
     def __init__(self, world_grid, position, intelligence, eating, wealth, alive=1, life_time=0):
         self.__world_grid = world_grid

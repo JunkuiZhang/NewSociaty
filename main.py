@@ -1,2 +1,2 @@
-from world import *
-from entities import *
+from World import *
+from Entities import *
