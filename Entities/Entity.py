@@ -111,7 +111,7 @@ class Entity:
             :param cor: 形如[x, y]的坐标
             :return: Boolean
             """
-            if cor[0] < 0 or cor[0] > len(self.world_grid[0]) - 1 or cor[1] < 0 or cor[1] > len(self.world_grid) - 1:
+            if cor[0] < 0 or cor[0] > len(self.world_grid[0]) - 1 or cor[1] < 0 or cor[1] > len(self.world_grid[0]) - 1:
                 return False
             else:
                 return True
@@ -141,7 +141,7 @@ class Entity:
 
         # 初始化position list
         position_list = []
-        position_list.append([self.world_grid[self.position], 0, self.position])
+        position_list.append([self.world_grid[self.position[0]][self.position[1]], 0, self.position])
         for i in range(self.intel + 1):
             for j in range(self.intel + 1):
                 if i == 0 and j == 0:
@@ -149,19 +149,19 @@ class Entity:
                     continue
                 new_position = [self.position[0] - i, self.position[1] - j]
                 if check_bond(new_position):
-                    position_status = self.world_grid[new_position]
+                    position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
                 new_position = [self.position[0] - i, self.position[1] + j]
                 if check_bond(new_position):
-                    position_status = self.world_grid[new_position]
+                    position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
                 new_position = [self.position[0] + i, self.position[1] - j]
                 if check_bond(new_position):
-                    position_status = self.world_grid[new_position]
+                    position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
                 new_position = [self.position[0] + i, self.position[1] + j]
                 if check_bond(new_position):
-                    position_status = self.world_grid[new_position]
+                    position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
 
         # 注意到这里不涉及对World的更改
