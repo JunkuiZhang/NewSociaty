@@ -36,4 +36,8 @@ class Animation:
         return self.__entities
 
     def playing(self):
-        pass
+        pixes_per_unit = round(self.resolution/self.dimension, 0)
+        pygame.init()
+        screen = pygame.display.set_mode((self.resolution, self.resolution))
+        pygame.display.set_caption('Society')
+        max_product = 
