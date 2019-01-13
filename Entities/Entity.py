@@ -1,6 +1,6 @@
 class Entity:
 
-    def __init__(self, world_grid, position, intelligence, eating, wealth, alive=1, life_time=0):
+    def __init__(self, world_grid, position, eating, wealth, intelligence=1, alive=1, life_time=0):
         # “世界”地图，详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
         #          [[product, is_occupied], ..., [product, is_occupied]],
