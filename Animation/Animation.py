@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import MathBehind.FindMaxValue
 
 
 
@@ -40,4 +41,10 @@ class Animation:
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
         pygame.display.set_caption('Society')
-        max_product = 
+        max_product = MathBehind.FindMaxValue.MaxFind(self.world)
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    exit()
+                
