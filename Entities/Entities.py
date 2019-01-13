@@ -1,4 +1,4 @@
-from . import Entity
+import Entity
 import random
 
 
@@ -42,6 +42,7 @@ class EntitiesPopulation:
 
 if __name__ == '__main__':
     import World.World
-    p = EntitiesPopulation(World.World.World(10), 20)
+    p = EntitiesPopulation(World.World.World(10).world_grid.matrix, 20)
+    p.population_init()
     for entity in p.pool:
         print(entity)
