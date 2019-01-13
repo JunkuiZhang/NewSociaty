@@ -79,6 +79,14 @@ class Entity:
         assert value == 1 or value == 0, 'Invalid alive value set for entity.'
         self.__alive = value
 
+    def __str__(self):
+        print('Entity status:')
+        print('position: {}'.format((str(self.position))))
+        print('earning:{}'.format((str(self.world_grid[self.position[0]][self.position[1]][0]))))
+        print('eating:{}'.format((str(self.eating))))
+        print('intelligence:{}'.format((str(self.intel))))
+        return '======='
+
     def live_one_day(self):
         """
         个体生存一天：
