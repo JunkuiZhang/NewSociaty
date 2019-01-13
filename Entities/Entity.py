@@ -166,4 +166,4 @@ class Entity:
 
         # 注意到这里不涉及对World的更改
         position_move = move_find(position_list, 'max')
-        self.position = position_move[1]
+        return position_move
