@@ -1,2 +1,3 @@
-from World import *
-from Entities import *
+import World.World
+import Entities.Entity
+import Animation.Animation
