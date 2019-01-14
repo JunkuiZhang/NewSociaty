@@ -10,3 +10,5 @@ if __name__ == '__main__':
     pop.population_init()
     w.population_position_insert(pop)
     w.world_grid.print_matrix()
+    w.world_grid_clean()
+    w.world_grid.print_matrix()

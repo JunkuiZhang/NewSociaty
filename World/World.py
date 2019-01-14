@@ -69,7 +69,7 @@ class World:
             self.world_grid.matrix[x][y][1] = 1
 
     def world_grid_clean(self):
-        for row in self.world_grid:
+        for row in self.world_grid.matrix:
             for col in row:
                 col[1] = 0
 
