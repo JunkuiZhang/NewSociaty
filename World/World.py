@@ -64,10 +64,10 @@ class World:
         self.__world_grid = m
 
     def population_position_insert(self, pop):
-        for entity in pop:
+        for entity in pop.pool:
             x, y = entity.position[0], entity.position[1]
-            self.world_grid[x][y][1] = 1
-            
+            self.world_grid.matrix[x][y][1] = 1
+
     def world_grid_clean(self):
         for row in self.world_grid:
             for col in row:
