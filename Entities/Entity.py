@@ -1,3 +1,7 @@
+import random
+
+
+
 class Entity:
 
     def __init__(self, world_grid, position, eating, wealth, intelligence=1, alive=1, life_time=0, bravery=True):
@@ -84,7 +88,7 @@ class Entity:
     @property
     def bravery(self):
         return self.__bravery
-    
+
     @bravery.setter
     def bravery(self, bool):
         assert type(bool) == 'bool', 'Wrong assignment.'
@@ -143,7 +147,7 @@ class Entity:
             :return: 包含产出及坐标的list类型，[产出, [x坐标, y坐标]]
             """
             assert mode == 'max' or mode == 'min', 'Invalid mode parameter.'
-            res = [pl[0], pl[2]]
+            res = [pl[0][0], pl[0][2]]
             for pls in pl:
                 if mode == 'max':
                     if (pls[0] > res[0] and pls[1] == 0):
@@ -158,8 +162,17 @@ class Entity:
                         pass
             return res
 
+        def need_of_bravery(pl, res):
+            if res[0] == 0:
+                move = random.choice(pl)
+                return (True, move)
+            else:
+                return (False, None)
+
         # 初始化position list
         position_list = []
+        # position list形如[[a1, b1, [x1, y1]], ..., [an, bn, [xn, yn]]]
+        # 其中a为格子产出，b为该格子是否存在其他个体，[x, y]为格子坐标
         position_list.append([self.world_grid[self.position[0]][self.position[1]], 0, self.position])
         for i in range(self.intel + 1):
             for j in range(self.intel + 1):
@@ -185,4 +198,7 @@ class Entity:
 
         # 注意到这里不涉及对World的更改
         position_move = move_find(position_list, 'max')
+        position_move = need_of_bravery(position_list, position_move)
+        if position_move[0]:
+            position_move = position_move[1]
         return position_move
