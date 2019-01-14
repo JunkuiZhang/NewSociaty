@@ -37,7 +37,7 @@ class EntitiesPopulation:
             self.pool.append(Entity.Entity(self.world_grid, [row_num, col_num], 10, 0))
 
     def population_move(self):
-        pass
+        for
 
 
 

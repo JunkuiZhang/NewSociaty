@@ -1,6 +1,6 @@
 class Entity:
 
-    def __init__(self, world_grid, position, eating, wealth, intelligence=1, alive=1, life_time=0):
+    def __init__(self, world_grid, position, eating, wealth, intelligence=1, alive=1, life_time=0, bravery=True):
         # “世界”地图，详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
         #          [[product, is_occupied], ..., [product, is_occupied]],
@@ -22,6 +22,8 @@ class Entity:
         self.__life_time = life_time
         # 个体的存货状态，1为存活，0为死亡
         self.__alive = alive
+        # 是否开启随机移动，当个体周围的格子产出全部为零时，随即移动到任意一个格子（防止原地等死）
+        self.__bravery = bravery
 
     @property
     def world_grid(self):
@@ -78,6 +80,15 @@ class Entity:
     def alive(self, value):
         assert value == 1 or value == 0, 'Invalid alive value set for entity.'
         self.__alive = value
+
+    @property
+    def bravery(self):
+        return self.__bravery
+    
+    @bravery.setter
+    def bravery(self, bool):
+        assert type(bool) == 'bool', 'Wrong assignment.'
+        self.__bravery = bool
 
     def __str__(self):
         print('Entity status:')
