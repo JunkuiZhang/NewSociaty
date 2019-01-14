@@ -9,6 +9,7 @@ class EntitiesPopulation:
         self.__world_grid = world_grid
         self.__total_num = total_num
         self.__seed = seed
+        # pool里为entity类型的object
         self.pool = []
 
     @property
