@@ -1,10 +1,12 @@
 import random
+import MathBehind.CoordinatesCal
 
 
 
 class Entity:
 
-    def __init__(self, world_grid, position, eating, wealth, intelligence=1, alive=1, life_time=0, bravery=True):
+    def __init__(self, world_grid, position, eating, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
+                 intel_mode=1):
         # “世界”地图，详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
         #          [[product, is_occupied], ..., [product, is_occupied]],
@@ -28,6 +30,8 @@ class Entity:
         self.__alive = alive
         # 是否开启随机移动，当个体周围的格子产出全部为零时，随即移动到任意一个格子（防止原地等死）
         self.__bravery = bravery
+        # 个体移动时，观察十字形还是圆形格子，0表示正方形，1表示十字形，2表示圆形
+        self.__intel_mode = intel_mode
 
     @property
     def world_grid(self):
@@ -94,6 +98,15 @@ class Entity:
         assert type(bool) == 'bool', 'Wrong assignment.'
         self.__bravery = bool
 
+    @property
+    def intel_mode(self):
+        return self.__intel_mode
+
+    @intel_mode.setter
+    def intel_mode(self, num):
+        assert type(num) == 'int', 'Invalid argument.'
+        self.__intel_mode = num
+
     def __str__(self):
         print('Entity status:')
         print('position: {}'.format((str(self.position))))
@@ -111,7 +124,7 @@ class Entity:
         4、判断个体存活状态
         :return:
         """
-        self.wealth += self.world_grid[self.position]
+        self.wealth += self.world_grid[self.position[0]][self.position[1]][0]
         self.wealth -= self.eating
         self.life_time += 1
         if self.wealth < 0:
@@ -128,23 +141,36 @@ class Entity:
         :return:
         """
 
-        def check_bond(cor):
+        def check_bond(cor, mode=self.intel_mode):
             """
             检测格子是否超出世界的范围
             :param cor: 形如[x, y]的坐标
+            :param mode: 详见类变量说明
             :return: Boolean
             """
             if cor[0] < 0 or cor[0] > len(self.world_grid[0]) - 1 or cor[1] < 0 or cor[1] > len(self.world_grid[0]) - 1:
                 return False
             else:
-                return True
+                if mode == 1:
+                    if cor[0] == self.position[0] or cor[1] == self.position[1]:
+                        return True
+                    else:
+                        return False
+                elif mode == 2:
+                    distance = MathBehind.CoordinatesCal.CoordinateCalculation().calculation(cor, self.position)
+                    if distance > self.intel:
+                        return False
+                    else:
+                        return True
+                else:
+                    return True
 
         def move_find(pl, mode='max'):
             """
             判断个体的最佳移动目标格子
             :param pl: 包含坐标、产出、是否被占据的list类型变量，形如[[z0, k0, [x0, y0]], ..., [产出, 是否被占据, [x坐标, y坐标]]]
             :param mode: 仅有“max”、“min”两种
-            :return: 包含产出及坐标的list类型，[产出, [x坐标, y坐标]]
+            :return: 包含坐标的list类型，[x坐标, y坐标]
             """
             assert mode == 'max' or mode == 'min', 'Invalid mode parameter.'
             res = [pl[0][0], pl[0][2]]
@@ -165,40 +191,60 @@ class Entity:
         def need_of_bravery(pl, res):
             if res[0] == 0:
                 move = random.choice(pl)
-                return (True, move)
+                return (True, move[2])
             else:
-                return (False, None)
+                return (False, res[1])
+
+        def is_considered(pos, pl):
+            """
+            去重函数
+            :param pos: 当前考虑的位置[x, u]
+            :param pl: 已经考虑过的位置list [[x0, y0], [x1, y1], ..., [xn, yn]]
+            :return: Bool
+            """
+            if pos in pl:
+                return True
+            else:
+                return False
 
         # 初始化position list
         position_list = []
         # position list形如[[a1, b1, [x1, y1]], ..., [an, bn, [xn, yn]]]
         # 其中a为格子产出，b为该格子是否存在其他个体，[x, y]为格子坐标
-        position_list.append([self.world_grid[self.position[0]][self.position[1]], 0, self.position])
+        position_list.append([self.world_grid[self.position[0]][self.position[1]][0], 0, self.position])
+        # 用来去重
+        position_pool = []
+        position_pool.append(self.position)
         for i in range(self.intel + 1):
             for j in range(self.intel + 1):
-                if i == 0 and j == 0:
-                    # 该情况即为初始化的格子
-                    continue
+                print("pos attempt {}".format(str([i, j])))
                 new_position = [self.position[0] - i, self.position[1] - j]
-                if check_bond(new_position):
+                if check_bond(new_position) and not is_considered(new_position, position_pool):
                     position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
+                    position_pool.append(new_position)
                 new_position = [self.position[0] - i, self.position[1] + j]
-                if check_bond(new_position):
+                if check_bond(new_position) and not is_considered(new_position, position_pool):
                     position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
+                    position_pool.append(new_position)
                 new_position = [self.position[0] + i, self.position[1] - j]
-                if check_bond(new_position):
+                if check_bond(new_position) and not is_considered(new_position, position_pool):
                     position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
+                    position_pool.append(new_position)
                 new_position = [self.position[0] + i, self.position[1] + j]
-                if check_bond(new_position):
+                if check_bond(new_position) and not is_considered(new_position, position_pool):
                     position_status = self.world_grid[new_position[0]][new_position[1]]
                     position_list.append([position_status[0], position_status[1], new_position])
+                    position_pool.append(new_position)
 
         # 注意到这里不涉及对World的更改
         position_move = move_find(position_list, 'max')
-        position_move = need_of_bravery(position_list, position_move)
-        if position_move[0]:
-            position_move = position_move[1]
+        bravery, position_move = need_of_bravery(position_list, position_move)
+        print('bravery is need {}'.format(str(bravery)))
+        print('current position is {}'.format(str(self.position)))
+        print('position move is {}'.format(str(position_move)))
+        print('position list is {}'.format(str(position_list)))
+        self.position = position_move
         return position_move

@@ -34,7 +34,7 @@ class EntitiesPopulation:
             while [row_num, col_num] in pos_occupied:
                 row_num = random.choice(range(len(self.world_grid[0])))
                 col_num = random.choice(range(len(self.world_grid[0])))
-            self.pool.append(Entity.Entity(self.world_grid, [row_num, col_num], 10, 0))
+            self.pool.append(Entity.Entity(self.world_grid, [row_num, col_num], eating=10))
 
     def population_move(self):
         assert not self.pool == [], 'pool init first.'
