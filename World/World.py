@@ -63,6 +63,16 @@ class World:
     def world_grid(self, m):
         self.__world_grid = m
 
+    def population_position_insert(self, pop):
+        for entity in pop:
+            x, y = entity.position[0], entity.position[1]
+            self.world_grid[x][y][1] = 1
+            
+    def world_grid_clean(self):
+        for row in self.world_grid:
+            for col in row:
+                col[1] = 0
+
     def generating(self):
         # 检查是否设置了随机种子
         if not (self.random_seed is None):
