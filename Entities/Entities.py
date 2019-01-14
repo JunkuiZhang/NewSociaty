@@ -37,7 +37,10 @@ class EntitiesPopulation:
             self.pool.append(Entity.Entity(self.world_grid, [row_num, col_num], 10, 0))
 
     def population_move(self):
-        for
+        assert not self.pool == [], 'pool init first.'
+        for entity in self.pool:
+            entity.live_one_day()
+            entity.move()
 
 
 
