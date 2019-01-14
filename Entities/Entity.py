@@ -217,7 +217,6 @@ class Entity:
         position_pool.append(self.position)
         for i in range(self.intel + 1):
             for j in range(self.intel + 1):
-                print("pos attempt {}".format(str([i, j])))
                 new_position = [self.position[0] - i, self.position[1] - j]
                 if check_bond(new_position) and not is_considered(new_position, position_pool):
                     position_status = self.world_grid[new_position[0]][new_position[1]]
@@ -242,9 +241,5 @@ class Entity:
         # 注意到这里不涉及对World的更改
         position_move = move_find(position_list, 'max')
         bravery, position_move = need_of_bravery(position_list, position_move)
-        print('bravery is need {}'.format(str(bravery)))
-        print('current position is {}'.format(str(self.position)))
-        print('position move is {}'.format(str(position_move)))
-        print('position list is {}'.format(str(position_list)))
         self.position = position_move
         return position_move
