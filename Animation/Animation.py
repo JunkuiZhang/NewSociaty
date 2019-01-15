@@ -30,13 +30,26 @@ class Animation:
         return self.__dimension
 
     def playing(self):
-        pixes_per_unit = round(self.resolution/self.dimension, 0)
+        width = round(self.resolution/self.dimension, 0)
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
         pygame.display.set_caption('Society')
-        max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix)
+        max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix).find()
 
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     exit()
+
+            for i in range(self.dimension):
+                for j in range(self.dimension):
+                    color_filled = self.world.world_grid.matrix[i][j][0] * 255 // max_product
+                    pygame.draw.rect(screen, (color_filled, color_filled, color_filled),
+                                     ((j-1)*width, (i-1)*width, j*width, i*width))
+                    if self.world.world_grid.matrix[i][j][1] == 1:
+                        pygame.draw.circle(screen, (234, 103, 83),
+                                           ((j-1)*width+width//2, (i-1)*width+width//2), width//3)
+
+            self.world.world_grid_clean()
+            self.entities.population_move()
+            self.world.population_position_insert(self.entities)
