@@ -39,8 +39,11 @@ class EntitiesPopulation:
     def population_move(self):
         assert not self.pool == [], 'pool init first.'
         for entity in self.pool:
-            entity.live_one_day()
-            entity.move()
+            if entity.alive == 1:
+                entity.live_one_day()
+                entity.move()
+            else:
+                pass
 
 
 
