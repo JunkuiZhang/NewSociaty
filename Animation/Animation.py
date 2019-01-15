@@ -1,12 +1,13 @@
 import pygame
 from pygame.locals import *
 import MathBehind.FindMaxValue
+import math
 
 
 
 class Animation:
 
-    def __init__(self, world, entities, fps=5):
+    def __init__(self, world, entities, fps=1):
         # World object
         self.__world = world
         # EntitiesPopulation object
