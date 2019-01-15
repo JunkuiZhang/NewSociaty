@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 import MathBehind.FindMaxValue
-import math
 
 
 
