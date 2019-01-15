@@ -11,6 +11,7 @@ class Animation:
         self.__world = world
         # EntitiesPopulation object
         self.__entities = entities
+        # 游戏帧率控制
         self.__fps = fps
         self.__resolution = self.world.resolution
         self.__dimension = self.world.dimension
