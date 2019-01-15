@@ -6,10 +6,12 @@ import MathBehind.FindMaxValue
 
 class Animation:
 
-    def __init__(self, world, entities):
+    def __init__(self, world, entities, fps=5):
         # World object
         self.__world = world
+        # EntitiesPopulation object
         self.__entities = entities
+        self.__fps = fps
         self.__resolution = self.world.resolution
         self.__dimension = self.world.dimension
 
@@ -22,6 +24,15 @@ class Animation:
         return self.__entities
 
     @property
+    def fps(self):
+        return self.__fps
+
+    @fps.setter
+    def fps(self, num):
+        assert type(num) == int, 'Wrong argument inserted.'
+        self.__fps = num
+
+    @property
     def resolution(self):
         return self.__resolution
 
@@ -30,15 +41,18 @@ class Animation:
         return self.__dimension
 
     def playing(self):
-        width = round(self.resolution/self.dimension, 0)
+        width = int(round(self.resolution/self.dimension, 0))
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
+        clock = pygame.time.Clock()
         pygame.display.set_caption('Society')
+        clock.tick(self.fps)
         max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix).find()
 
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
+                    pygame.quit()
                     exit()
 
             for i in range(self.dimension):
@@ -53,3 +67,4 @@ class Animation:
             self.world.world_grid_clean()
             self.entities.population_move()
             self.world.population_position_insert(self.entities)
+            pygame.display.update()

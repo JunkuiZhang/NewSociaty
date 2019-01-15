@@ -5,7 +5,7 @@ import MathBehind.CoordinatesCal
 
 class World:
 
-    def __init__(self, dimension=50, resolution=1000, random_seed=None, mountain_factor=.6, base_product=(100, 50)):
+    def __init__(self, dimension=50, resolution=600, random_seed=None, mountain_factor=.6, base_product=(100, 50)):
         # n by n的世界棋盘，默认为50X50
         self.__dimension = dimension
         # 画出棋盘时所用的分辨率
