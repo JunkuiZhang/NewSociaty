@@ -21,8 +21,10 @@ class Entity:
         self.__position = position
         # 该个体的“能力”，本模型中为个体能看到多远的格子
         self.__intel = intelligence
-        # 个体每日所消耗的能量
+        # 个体每日所消耗的基础能量
         self.__eating = eating
+        # 根据wealth调整后的eating值
+        self.__eating_plus = eating
         # 个体除去每日所消耗的能量后所积累的剩余
         self.__wealth = wealth
         # 个体存活时间，以“天”记
@@ -71,6 +73,14 @@ class Entity:
     def eating(self, value):
         assert value > 0, 'Invalid value for property "Eating".'
         self.__eating = value
+
+    @property
+    def eating_plus(self):
+        return self.__eating_plus
+
+    @eating_plus.setter
+    def eating_plus(self, num):
+        self.__eating_plus = num
 
     @property
     def wealth(self):
@@ -152,6 +162,9 @@ class Entity:
         else:
             return 1
 
+    def eating_adjustment(self):
+        self.eating_plus = self.wealth * .2 + self.eating
+
     def live_one_day(self):
         """
         个体生存一天：
@@ -163,9 +176,10 @@ class Entity:
         :return:
         """
         self.wealth += self.world_grid[self.position[0]][self.position[1]][0]
-        self.wealth -= self.eating
+        self.wealth -= self.eating_plus
         self.life_time += 1
         self.delta_wealth_changer(self.delta_wealth_detector())
+        self.eating_adjustment()
         self.eating *= (1 + self.world.inflation)
         if self.wealth < 0:
             self.alive = 0
