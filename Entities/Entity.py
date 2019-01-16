@@ -292,9 +292,5 @@ class Entity:
         self.world.world_grid.insert_value(self.position, [2, 0])
         self.position = position_move
         self.world.world_grid.insert_value(self.position, [2, 1])
-        print('Bravery: {}'.format(str(bravery)))
-        print('Alive: {}'.format(str(self.alive)))
-        print('Position: {}'.format(str(self.position)))
-        print('=='*10)
 
         return position_move
