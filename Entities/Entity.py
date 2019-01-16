@@ -4,9 +4,9 @@ import MathBehind.CoordinatesCal
 
 class Entity:
 
-    def __init__(self, world_grid, position, eating, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
-                 intel_mode=1):
-        # “世界”地图，详见World
+    def __init__(self, world, position, eating, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
+                 intel_mode=1, delta_wealth_indicator=False):
+        # “世界”地图（矩阵），详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
         #          [[product, is_occupied], ..., [product, is_occupied]],
         #          ...
@@ -14,7 +14,9 @@ class Entity:
         #
         #     product: 大于0的float类型变量
         # is_occupied: 1表示有个体，0表示没有个体
-        self.__world_grid = world_grid
+        self.__world_grid = world.world_grid.matrix
+        # world object
+        self.__world = world
         # 该个体在世界中所处的位置
         self.__position = position
         # 该个体的“能力”，本模型中为个体能看到多远的格子
@@ -31,10 +33,18 @@ class Entity:
         self.__bravery = bravery
         # 个体移动时，观察十字形还是圆形格子，0表示正方形，1表示十字形，2表示圆形
         self.__intel_mode = intel_mode
+        # 个体的财富增量，用以计算是否需要bravery
+        # 考察3期的财富增量，[a, b, c]分别表示第1、2、3期的财富增量，当财富增量小于0时，值为0
+        self.__delta_wealth = [1, 1, 1]
+        self.__delta_wealth_indicator = delta_wealth_indicator
 
     @property
     def world_grid(self):
         return self.__world_grid
+
+    @property
+    def world(self):
+        return self.__world
 
     @property
     def position(self):
@@ -106,6 +116,23 @@ class Entity:
         assert type(num) == 'int', 'Invalid argument.'
         self.__intel_mode = num
 
+    @property
+    def delta_wealth(self):
+        return self.__delta_wealth
+
+    @delta_wealth.setter
+    def delta_wealth(self, l):
+        self.__delta_wealth = l
+
+    @property
+    def delta_wealth_indicator(self):
+        return self.__delta_wealth_indicator
+
+    @delta_wealth_indicator.setter
+    def delta_wealth_indicator(self, value):
+        assert type(value) == 'bool', 'Wrong argument assignment.'
+        self.__delta_wealth_indicator = value
+
     def __str__(self):
         print('Entity status:')
         print('position: {}'.format((str(self.position))))
@@ -114,18 +141,31 @@ class Entity:
         print('intelligence:{}'.format((str(self.intel))))
         return '======='
 
+    def delta_wealth_changer(self, value):
+        dw0 = self.delta_wealth
+        dw1 = [dw0[1], dw0[2], value]
+        self.delta_wealth = dw1
+
+    def delta_wealth_detector(self):
+        if self.world_grid[self.position[0]][self.position[1]][0] - self.eating < 0:
+            return 0
+        else:
+            return 1
+
     def live_one_day(self):
         """
         个体生存一天：
         1、收获个体所处的单元格上的能量
         2、个体消耗其一天所需要的能量
         3、生存时间+1
-        4、判断个体存活状态
+        4、更改delta wealth状态
+        5、判断个体存活状态
         :return:
         """
         self.wealth += self.world_grid[self.position[0]][self.position[1]][0]
         self.wealth -= self.eating
         self.life_time += 1
+        self.delta_wealth_changer(self.delta_wealth_detector())
         if self.wealth < 0:
             self.alive = 0
 
@@ -188,8 +228,18 @@ class Entity:
             return res
 
         def need_of_bravery(pl, res):
+
+            def delta_wealth_check(dw):
+                if sum(dw) == 0:
+                    return True
+                else:
+                    return False
+
+            move = random.choice(pl)
             if res[0] == 0:
-                move = random.choice(pl)
+                return True, move[2]
+            elif delta_wealth_check(self.delta_wealth) and self.delta_wealth_indicator:
+                # 连续3期财富增量小于0，防止等死
                 return True, move[2]
             else:
                 return False, res[1]
@@ -237,9 +287,14 @@ class Entity:
                     position_list.append([position_status[0], position_status[1], new_position])
                     position_pool.append(new_position)
 
-        # 注意到这里不涉及对World的更改
         position_move = move_find(position_list, 'max')
         bravery, position_move = need_of_bravery(position_list, position_move)
+        self.world.world_grid.insert_value(self.position, [2, 0])
         self.position = position_move
+        self.world.world_grid.insert_value(self.position, [2, 1])
+        print('Bravery: {}'.format(str(bravery)))
+        print('Alive: {}'.format(str(self.alive)))
+        print('Position: {}'.format(str(self.position)))
+        print('=='*10)
 
         return position_move

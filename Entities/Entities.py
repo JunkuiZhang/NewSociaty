@@ -4,12 +4,17 @@ import random
 
 class EntitiesPopulation:
 
-    def __init__(self, world_grid, total_num, seed=None):
-        self.__world_grid = world_grid
+    def __init__(self, world, total_num):
+        self.__world = world
+        self.__world_grid = world.world_grid.matrix
         self.__total_num = total_num
-        self.__seed = seed
+        self.__seed = world.random_seed
         # pool里为entity类型的object
         self.pool = []
+
+    @property
+    def world(self):
+        return self.__world
 
     @property
     def world_grid(self):
@@ -33,7 +38,7 @@ class EntitiesPopulation:
             while [row_num, col_num] in pos_occupied:
                 row_num = random.choice(range(len(self.world_grid[0])))
                 col_num = random.choice(range(len(self.world_grid[0])))
-            self.pool.append(Entity.Entity(self.world_grid, [row_num, col_num], eating=10))
+            self.pool.append(Entity.Entity(self.world, [row_num, col_num], eating=10))
 
     def population_move(self):
         assert not self.pool == [], 'pool init first.'
@@ -42,7 +47,7 @@ class EntitiesPopulation:
                 _entity.live_one_day()
                 _entity.move()
             else:
-                pass
+                self.world.world_grid.insert_value(_entity.position, [2, 0])
 
 
 if __name__ == '__main__':

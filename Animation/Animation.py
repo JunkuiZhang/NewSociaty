@@ -59,11 +59,12 @@ class Animation:
                     pygame.draw.rect(screen, (color_filled, color_filled, color_filled),
                                      ((j - 1) * width, (i - 1) * width, j * width, i * width))
                     if self.world.world_grid.matrix[i][j][1] == 1:
+                        coordinates = (j * width + width // 2, i * width + width // 2)
                         pygame.draw.circle(screen, (234, 103, 83),
-                                           ((j - 1) * width + width // 2, (i - 1) * width + width // 2), width // 3)
+                                           coordinates, width // 3)
 
             clock.tick(self.fps)
-            self.world.world_grid_clean()
+            print(self.world.world_grid.print_matrix())
             self.entities.population_move()
             self.world.population_position_insert(self.entities)
             pygame.display.update()
