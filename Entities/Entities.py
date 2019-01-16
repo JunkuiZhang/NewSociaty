@@ -2,7 +2,6 @@ import Entity
 import random
 
 
-
 class EntitiesPopulation:
 
     def __init__(self, world_grid, total_num, seed=None):
@@ -38,13 +37,12 @@ class EntitiesPopulation:
 
     def population_move(self):
         assert not self.pool == [], 'pool init first.'
-        for entity in self.pool:
-            if entity.alive == 1:
-                entity.live_one_day()
-                entity.move()
+        for _entity in self.pool:
+            if _entity.alive == 1:
+                _entity.live_one_day()
+                _entity.move()
             else:
                 pass
-
 
 
 if __name__ == '__main__':

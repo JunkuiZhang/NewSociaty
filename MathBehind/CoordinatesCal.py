@@ -14,7 +14,6 @@ class CoordinateCalculation:
         return result**.5
 
 
-
 if __name__ == '__main__':
     coor = CoordinateCalculation()
     num = coor.calculation([0, 0], [3, 4])

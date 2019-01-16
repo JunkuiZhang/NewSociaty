@@ -3,9 +3,7 @@ from pygame.locals import *
 import MathBehind.FindMaxValue
 
 
-
 class Animation:
-
     def __init__(self, world, entities, fps=1):
         # World object
         self.__world = world
@@ -42,7 +40,7 @@ class Animation:
         return self.__dimension
 
     def playing(self):
-        width = int(round(self.resolution/self.dimension, 0))
+        width = int(round(self.resolution / self.dimension, 0))
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
         clock = pygame.time.Clock()
@@ -60,10 +58,10 @@ class Animation:
                 for j in range(self.dimension):
                     color_filled = self.world.world_grid.matrix[i][j][0] * 255 // max_product
                     pygame.draw.rect(screen, (color_filled, color_filled, color_filled),
-                                     ((j-1)*width, (i-1)*width, j*width, i*width))
+                                     ((j - 1) * width, (i - 1) * width, j * width, i * width))
                     if self.world.world_grid.matrix[i][j][1] == 1:
                         pygame.draw.circle(screen, (234, 103, 83),
-                                           ((j-1)*width+width//2, (i-1)*width+width//2), width//3)
+                                           ((j - 1) * width + width // 2, (i - 1) * width + width // 2), width // 3)
 
             self.world.world_grid_clean()
             self.entities.population_move()

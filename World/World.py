@@ -104,10 +104,10 @@ class World:
                         continue
                     # 距离糖山中心越近，产出越高，some factor为一个修正系数
                     some_factor = .9
-                    product *= (abs(calculator.calculation([i, j], central_position)-mountain_semi_diameter)*some_factor)
+                    product *= (abs(calculator.calculation([i, j], central_position)-mountain_semi_diameter)
+                                * some_factor)
                     product = round(product, 2)
                     self.world_grid.insert_value([i, j], [1, product])
-
 
 
 if __name__ == '__main__':

@@ -62,7 +62,6 @@ class Generator:
             print(s[1:(len(s)-1)] + ', ')
 
 
-
 if __name__ == '__main__':
     g = Generator(5)
     print(g.print_matrix())

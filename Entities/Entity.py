@@ -2,7 +2,6 @@ import random
 import MathBehind.CoordinatesCal
 
 
-
 class Entity:
 
     def __init__(self, world_grid, position, eating, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
@@ -94,9 +93,9 @@ class Entity:
         return self.__bravery
 
     @bravery.setter
-    def bravery(self, bool):
-        assert type(bool) == 'bool', 'Wrong assignment.'
-        self.__bravery = bool
+    def bravery(self, indicator):
+        assert type(indicator) == 'bool', 'Wrong assignment.'
+        self.__bravery = indicator
 
     @property
     def intel_mode(self):
@@ -176,13 +175,13 @@ class Entity:
             res = [pl[0][0], pl[0][2]]
             for pls in pl:
                 if mode == 'max':
-                    if (pls[0] > res[0] and pls[1] == 0):
+                    if pls[0] > res[0] and pls[1] == 0:
                         # 产出大于当前最优格子，且该格子无个体占据
                         res = [pls[0], pls[2]]
                     else:
                         pass
                 elif mode == 'min':
-                    if (pls[0] < res[0] and pls[1] == 0):
+                    if pls[0] < res[0] and pls[1] == 0:
                         res = [pls[0], pls[2]]
                     else:
                         pass
@@ -191,9 +190,9 @@ class Entity:
         def need_of_bravery(pl, res):
             if res[0] == 0:
                 move = random.choice(pl)
-                return (True, move[2])
+                return True, move[2]
             else:
-                return (False, res[1])
+                return False, res[1]
 
         def is_considered(pos, pl):
             """
@@ -242,4 +241,5 @@ class Entity:
         position_move = move_find(position_list, 'max')
         bravery, position_move = need_of_bravery(position_list, position_move)
         self.position = position_move
+
         return position_move
