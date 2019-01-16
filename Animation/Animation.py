@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import MathBehind.FindMaxValue
+import MathBehind.GiniCal
 
 
 class Animation:
@@ -46,6 +47,7 @@ class Animation:
         clock = pygame.time.Clock()
         pygame.display.set_caption('Society')
         max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix).find()
+        index_cal = MathBehind.GiniCal.GinCalculator()
 
         while True:
             for event in pygame.event.get():
@@ -63,6 +65,7 @@ class Animation:
                         pygame.draw.circle(screen, (234, 103, 83), coordinates, width // 3)
 
             clock.tick(self.fps)
+            index_cal.calculate(self.entities.pool, self.world.world_grid.matrix)
             self.entities.population_move()
             self.world.population_position_insert(self.entities)
             pygame.display.update()

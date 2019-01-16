@@ -181,12 +181,12 @@ class Entity:
         self.delta_wealth_changer(self.delta_wealth_detector())
         self.eating_adjustment()
         self.eating *= (1 + self.world.inflation)
-        print('Alive: {}'.format(str(self.alive)))
-        print('Basic eating: {}'.format(str(self.eating)))
-        print('Adj eating: {}'.format(str(self.eating_plus)))
-        print('Delta wealth: {}'.format(str(self.delta_wealth)))
-        print('DW indicator: {}'.format(str(self.delta_wealth_indicator)))
-        print('=='*10)
+        # print('Alive: {}'.format(str(self.alive)))
+        # print('Basic eating: {}'.format(str(self.eating)))
+        # print('Adj eating: {}'.format(str(self.eating_plus)))
+        # print('Delta wealth: {}'.format(str(self.delta_wealth)))
+        # print('DW indicator: {}'.format(str(self.delta_wealth_indicator)))
+        # print('=='*10)
         if self.wealth < 0:
             self.alive = 0
 
