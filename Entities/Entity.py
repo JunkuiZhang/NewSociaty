@@ -166,6 +166,7 @@ class Entity:
         self.wealth -= self.eating
         self.life_time += 1
         self.delta_wealth_changer(self.delta_wealth_detector())
+        self.eating *= (1 + self.world.inflation)
         if self.wealth < 0:
             self.alive = 0
 

@@ -5,7 +5,8 @@ import MathBehind.CoordinatesCal
 
 class World:
 
-    def __init__(self, dimension=50, resolution=600, random_seed=None, mountain_factor=.6, base_product=(100, 50)):
+    def __init__(self, dimension=50, resolution=600, random_seed=None, mountain_factor=.6, base_product=(100, 50),
+                 inflation=.05):
         # n by n的世界棋盘，默认为50X50
         self.__dimension = dimension
         # 画出棋盘时所用的分辨率
@@ -16,6 +17,8 @@ class World:
         self.__mountain_factor = mountain_factor
         # 设置生成糖山时的随机数的均值及标准差
         self.__base_product = base_product
+        # 通胀水平，每期增加个体的eating消耗
+        self.__inflation = inflation
         self.__world_grid = None
         self.generating()
 
@@ -54,6 +57,15 @@ class World:
     @property
     def base_product(self):
         return self.__base_product
+
+    @property
+    def inflation(self):
+        return self.__inflation
+
+    @inflation.setter
+    def inflation(self, num):
+        assert num < 1 and num >= 0, 'Wrong inflation value assigned.'
+        self.__inflation = num
 
     @property
     def world_grid(self):
