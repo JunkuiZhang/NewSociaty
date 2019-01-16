@@ -60,8 +60,7 @@ class Animation:
                                      (j * width, i * width, width, width))
                     if self.world.world_grid.matrix[i][j][1] == 1:
                         coordinates = (j * width + width // 2, i * width + width // 2)
-                        pygame.draw.circle(screen, (234, 103, 83),
-                                           coordinates, width // 3)
+                        pygame.draw.circle(screen, (234, 103, 83), coordinates, width // 3)
 
             clock.tick(self.fps)
             self.entities.population_move()
