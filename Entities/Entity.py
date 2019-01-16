@@ -5,7 +5,7 @@ import MathBehind.CoordinatesCal
 class Entity:
 
     def __init__(self, world, position, eating, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
-                 intel_mode=1, delta_wealth_indicator=False):
+                 intel_mode=1, delta_wealth_indicator=True):
         # “世界”地图（矩阵），详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
         #          [[product, is_occupied], ..., [product, is_occupied]],
@@ -157,7 +157,7 @@ class Entity:
         self.delta_wealth = dw1
 
     def delta_wealth_detector(self):
-        if self.world_grid[self.position[0]][self.position[1]][0] - self.eating < 0:
+        if self.world_grid[self.position[0]][self.position[1]][0] - self.eating_plus < 0:
             return 0
         else:
             return 1
@@ -181,6 +181,12 @@ class Entity:
         self.delta_wealth_changer(self.delta_wealth_detector())
         self.eating_adjustment()
         self.eating *= (1 + self.world.inflation)
+        print('Alive: {}'.format(str(self.alive)))
+        print('Basic eating: {}'.format(str(self.eating)))
+        print('Adj eating: {}'.format(str(self.eating_plus)))
+        print('Delta wealth: {}'.format(str(self.delta_wealth)))
+        print('DW indicator: {}'.format(str(self.delta_wealth_indicator)))
+        print('=='*10)
         if self.wealth < 0:
             self.alive = 0
 
