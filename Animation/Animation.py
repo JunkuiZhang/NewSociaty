@@ -4,7 +4,7 @@ import MathBehind.FindMaxValue
 
 
 class Animation:
-    def __init__(self, world, entities, fps=1):
+    def __init__(self, world, entities, fps=2):
         # World object
         self.__world = world
         # EntitiesPopulation object
@@ -45,7 +45,6 @@ class Animation:
         screen = pygame.display.set_mode((self.resolution, self.resolution))
         clock = pygame.time.Clock()
         pygame.display.set_caption('Society')
-        clock.tick(self.fps)
         max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix).find()
 
         while True:
@@ -63,6 +62,7 @@ class Animation:
                         pygame.draw.circle(screen, (234, 103, 83),
                                            ((j - 1) * width + width // 2, (i - 1) * width + width // 2), width // 3)
 
+            clock.tick(self.fps)
             self.world.world_grid_clean()
             self.entities.population_move()
             self.world.population_position_insert(self.entities)
