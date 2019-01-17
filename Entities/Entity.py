@@ -4,7 +4,7 @@ import MathBehind.CoordinatesCal
 
 class Entity:
 
-    def __init__(self, world, position, eating, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
+    def __init__(self, world, position, eating, entity_id=-1, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
                  intel_mode=1, delta_wealth_indicator=True):
         # “世界”地图（矩阵），详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
@@ -17,6 +17,8 @@ class Entity:
         self.__world_grid = world.world_grid.matrix
         # world object
         self.__world = world
+        # 个体的唯一id
+        self.__entity_id = entity_id
         # 该个体在世界中所处的位置
         self.__position = position
         # 该个体的“能力”，本模型中为个体能看到多远的格子
@@ -39,6 +41,14 @@ class Entity:
         # 考察3期的财富增量，[a, b, c]分别表示第1、2、3期的财富增量，当财富增量小于0时，值为0
         self.__delta_wealth = [1, 1, 1]
         self.__delta_wealth_indicator = delta_wealth_indicator
+
+    @property
+    def entity_id(self):
+        return self.__entity_id
+
+    @entity_id.setter
+    def entity_id(self, num):
+        self.__entity_id = num
 
     @property
     def world_grid(self):
