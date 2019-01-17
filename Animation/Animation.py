@@ -45,7 +45,7 @@ class Animation:
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
         clock = pygame.time.Clock()
-        pygame.display.set_caption('Society')
+        pygame.display.set_caption('The Great Sugar Empire')
         max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix).find()
         index_cal = MathBehind.GiniCal.GinCalculator()
 
