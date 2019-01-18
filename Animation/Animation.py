@@ -5,7 +5,7 @@ import MathBehind.GiniCal
 
 
 class Animation:
-    def __init__(self, world, entities, fps=2):
+    def __init__(self, world, entities, fps=2, data_saving=True):
         # World object
         self.__world = world
         # EntitiesPopulation object
