@@ -12,6 +12,8 @@ class Animation:
         self.__entities = entities
         # 游戏帧率控制
         self.__fps = fps
+        # 是否保存数据
+        self.__data_saving = data_saving
         self.__resolution = self.world.resolution
         self.__dimension = self.world.dimension
 
@@ -31,6 +33,14 @@ class Animation:
     def fps(self, num):
         assert type(num) == int, 'Wrong argument inserted.'
         self.__fps = num
+
+    @property
+    def data_saving(self):
+        return self.__data_saving
+
+    @data_saving.setter
+    def data_saving(self, indicator):
+        self.__data_saving = indicator
 
     @property
     def resolution(self):
