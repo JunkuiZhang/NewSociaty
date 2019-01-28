@@ -8,21 +8,24 @@ class GinCalculator:
         income_pool = []
         delta_wealth = 0
         wealth_pool = []
-        for _entity1 in entities_pool:
-            if _entity1.alive == 0:
+
+        for _entity in entities_pool:
+            if _entity.alive == 0:
                 continue
-            income1 = world_grid_matrix[_entity1.position[0]][_entity1.position[1]][0]
-            income_pool.append(income1)
-            wealth_pool.append(_entity1.wealth)
-            for _entity2 in entities_pool:
-                if _entity2.alive == 0:
-                    continue
-                income2 = world_grid_matrix[_entity2.position[0]][_entity2.position[1]][0]
-                delta_income += abs(income1 - income2)
-                delta_wealth += abs(_entity1.wealth - _entity2.wealth)
+            income = world_grid_matrix[_entity.position[0]][_entity.position[1]][0]
+            income_pool.append(income)
+            wealth_pool.append(_entity.wealth)
 
         total_num = len(income_pool)
-        assert total_num == len(wealth_pool), 'Oops, something happened.'
+        assert total_num == len(wealth_pool),
+
+        for i in range(total_num):
+            for j in range(total_num):
+                if i == j:
+                    continue
+                delta_income += abs(income_pool[i] - income_pool[j])
+                delta_wealth += abs(wealth_pool[i] - wealth_pool[j])
+
         delta_income = delta_income / (total_num**2)
         delta_wealth = delta_wealth / (total_num**2)
         mean_of_income = sum(income_pool) / total_num
