@@ -18,6 +18,8 @@ class GinCalculator:
 
         total_num = len(income_pool)
         assert total_num == len(wealth_pool), 'Oops, something wrong happened.'
+        if total_num == 0:
+            return 0
 
         for i in range(total_num):
             for j in range(total_num):
@@ -32,8 +34,5 @@ class GinCalculator:
         mean_of_wealth = sum(wealth_pool) / total_num
         index_of_income = delta_income / (2 * mean_of_income)
         index_of_wealth = delta_wealth / (2 * mean_of_wealth)
-        print('Index income: {}'.format(str(index_of_income)))
-        print('Index wealth: {}'.format(str(index_of_wealth)))
-        print('=='*10)
 
         return index_of_income, index_of_wealth
