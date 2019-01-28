@@ -3,10 +3,11 @@ from pygame.locals import *
 import MathBehind.FindMaxValue
 import MathBehind.GiniCal
 import os
+import csv
 
 
 class Animation:
-    def __init__(self, world, entities, fps=2, data_saving=True):
+    def __init__(self, world, entities, fps=2, file_name=''):
         # World object
         self.__world = world
         # EntitiesPopulation object
@@ -14,7 +15,7 @@ class Animation:
         # 游戏帧率控制
         self.__fps = fps
         # 是否保存数据
-        self.__data_saving = data_saving
+        self.__file_name = file_name
         self.__resolution = self.world.resolution
         self.__dimension = self.world.dimension
 
@@ -36,12 +37,12 @@ class Animation:
         self.__fps = num
 
     @property
-    def data_saving(self):
-        return self.__data_saving
+    def file_name(self):
+        return self.__file_name
 
-    @data_saving.setter
-    def data_saving(self, indicator):
-        self.__data_saving = indicator
+    @file_name.setter
+    def file_name(self, name_string):
+        self.__file_name = name_string
 
     @property
     def resolution(self):
@@ -52,14 +53,24 @@ class Animation:
         return self.__dimension
 
     def data_saving_init(self):
-        if self.data_saving:
+        if self.file_name:
             if not os.path.isdir('./Data'):
                 os.mkdir('./Data')
-            else:
-                pass
+            elif os.path.isdir('./Data'):
+                file_position = './Data/' + self.file_name + '.csv'
+                if os.path.isfile(file_position):
+                    os.remove(file_position)
 
     def playing(self):
         self.data_saving_init()
+
+        # 保存数据部分
+        if self.file_name:
+            file_name = self.file_name + '.csv'
+            file_position = './Data/' + file_name
+            file = open(file_position, 'w', newline='')
+            writer = csv.writer(file)
+            writer.writerow(['Time', 'ID', 'Ability', 'Status', 'Earning', 'Eating', 'Wealth'])
 
         width = int(round(self.resolution / self.dimension, 0))
         pygame.init()
@@ -72,6 +83,8 @@ class Animation:
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
+                    if self.file_name:
+                        file.close()
                     pygame.quit()
                     exit()
 
@@ -86,6 +99,20 @@ class Animation:
 
             clock.tick(self.fps)
             index_cal.calculate(self.entities.pool, self.world.world_grid.matrix)
+
+            if self.file_name:
+                live_num = 0
+                for ent in self.entities.pool:
+                    writer.writerow([self.world.world_time, ent.entity_id, ent.intel, ent.alive,
+                                     self.world.world_grid.matrix[ent.position[0]][ent.position[1]],
+                                     ent.eating_plus, ent.wealth])
+                    if ent.alive == 1:
+                        live_num += 1
+                if live_num == 0:
+                    print('Game Over')
+                    file.close()
+                    break
+
             self.entities.population_move()
             self.world.population_position_insert(self.entities)
             pygame.display.update()

@@ -20,6 +20,7 @@ class World:
         # 通胀水平，每期增加个体的eating消耗
         self.__inflation = inflation
         self.__world_grid = None
+        self.__world_time = 0
         self.generating()
 
     @property
@@ -75,6 +76,14 @@ class World:
     def world_grid(self, m):
         self.__world_grid = m
 
+    @property
+    def world_time(self):
+        return self.__world_time
+
+    @world_time.setter
+    def world_time(self, num):
+        self.__world_time = num
+
     def population_position_insert(self, pop):
         for entity in pop.pool:
             if entity.alive == 1:
@@ -93,6 +102,9 @@ class World:
             random.seed(self.random_seed)
         else:
             pass
+        # 检测world time值
+        if not self.world_time == 0:
+            self.world_time = 0
         # 糖山的半径
         mountain_semi_diameter = round(self.dimension * self.mountain_factor * .5, 0)
         central_position = [round(self.dimension * .5, 0), round(self.dimension * .5, 0)]
