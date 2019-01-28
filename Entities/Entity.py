@@ -4,8 +4,8 @@ import MathBehind.CoordinatesCal
 
 class Entity:
 
-    def __init__(self, world, position, eating, entity_id=-1, wealth=50, intelligence=1, alive=1, life_time=0, bravery=True,
-                 intel_mode=1, delta_wealth_indicator=True):
+    def __init__(self, world, position, eating, entity_id=-1, wealth=50, intelligence=1, alive=1, life_time=0,
+                 bravery=True, intel_mode=1, delta_wealth_indicator=True):
         # “世界”地图（矩阵），详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
         #          [[product, is_occupied], ..., [product, is_occupied]],
@@ -287,6 +287,12 @@ class Entity:
             else:
                 return False
 
+        def check_point(new_pos, pos_pool, pos_list):
+            if check_bond(new_pos) and not is_considered(new_pos, pos_pool):
+                pos_status = self.world_grid[new_pos[0]][new_pos[1]]
+                pos_list.append([pos_status[0], pos_status[1], new_pos])
+                pos_pool.append(new_pos)
+
         # 初始化position list
         position_list = []
         # position list形如[[a1, b1, [x1, y1]], ..., [an, bn, [xn, yn]]]
@@ -298,25 +304,13 @@ class Entity:
         for i in range(self.intel + 1):
             for j in range(self.intel + 1):
                 new_position = [self.position[0] - i, self.position[1] - j]
-                if check_bond(new_position) and not is_considered(new_position, position_pool):
-                    position_status = self.world_grid[new_position[0]][new_position[1]]
-                    position_list.append([position_status[0], position_status[1], new_position])
-                    position_pool.append(new_position)
+                check_point(new_position, position_pool, position_list)
                 new_position = [self.position[0] - i, self.position[1] + j]
-                if check_bond(new_position) and not is_considered(new_position, position_pool):
-                    position_status = self.world_grid[new_position[0]][new_position[1]]
-                    position_list.append([position_status[0], position_status[1], new_position])
-                    position_pool.append(new_position)
+                check_point(new_position, position_pool, position_list)
                 new_position = [self.position[0] + i, self.position[1] - j]
-                if check_bond(new_position) and not is_considered(new_position, position_pool):
-                    position_status = self.world_grid[new_position[0]][new_position[1]]
-                    position_list.append([position_status[0], position_status[1], new_position])
-                    position_pool.append(new_position)
+                check_point(new_position, position_pool, position_list)
                 new_position = [self.position[0] + i, self.position[1] + j]
-                if check_bond(new_position) and not is_considered(new_position, position_pool):
-                    position_status = self.world_grid[new_position[0]][new_position[1]]
-                    position_list.append([position_status[0], position_status[1], new_position])
-                    position_pool.append(new_position)
+                check_point(new_position, position_pool, position_list)
 
         position_move = move_find(position_list, 'max')
         bravery, position_move = need_of_bravery(position_list, position_move)
