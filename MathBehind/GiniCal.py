@@ -17,7 +17,7 @@ class GinCalculator:
             wealth_pool.append(_entity.wealth)
 
         total_num = len(income_pool)
-        assert total_num == len(wealth_pool),
+        assert total_num == len(wealth_pool), 'Oops, something wrong happened.'
 
         for i in range(total_num):
             for j in range(total_num):
