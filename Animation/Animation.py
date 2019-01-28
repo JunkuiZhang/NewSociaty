@@ -104,7 +104,7 @@ class Animation:
                 live_num = 0
                 for ent in self.entities.pool:
                     writer.writerow([self.world.world_time, ent.entity_id, ent.intel, ent.alive,
-                                     self.world.world_grid.matrix[ent.position[0]][ent.position[1]],
+                                     self.world.world_grid.matrix[ent.position[0]][ent.position[1]][0],
                                      ent.eating_plus, ent.wealth])
                     if ent.alive == 1:
                         live_num += 1
