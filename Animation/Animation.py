@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import MathBehind.FindMaxValue
 import MathBehind.GiniCal
+import os
 
 
 class Animation:
@@ -50,7 +51,16 @@ class Animation:
     def dimension(self):
         return self.__dimension
 
+    def data_saving_init(self):
+        if self.data_saving:
+            if not os.path.isdir('./Data'):
+                os.mkdir('./Data')
+            else:
+                pass
+
     def playing(self):
+        self.data_saving_init()
+
         width = int(round(self.resolution / self.dimension, 0))
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
