@@ -55,7 +55,7 @@ class EntitiesPopulation:
             else:
                 intelligence = self.fixed_intel_num
             initial_wealth = random.randint(20, 60)
-            self.pool.append(Entity.Entity(self.world, [row_num, col_num], wealth= initial_wealth,
+            self.pool.append(Entity.Entity(self.world, [row_num, col_num], wealth=initial_wealth,
                                            intelligence=intelligence, entity_id=(i+1), eating=1))
             self.pos_pool.append([row_num, col_num])
 
@@ -78,7 +78,6 @@ class EntitiesPopulation:
             else:
                 ent.alive = 0
                 self.pool.remove(ent)
-
 
 
 if __name__ == '__main__':

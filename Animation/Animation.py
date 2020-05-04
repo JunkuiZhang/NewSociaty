@@ -71,10 +71,13 @@ class Animation:
                 if os.path.isfile(file_position):
                     os.remove(file_position)
 
-    def strings_display(self, screen, gini=-1):
+    def strings_display(self, screen, gini=(-1, -1), top=-1):
         font = pygame.font.SysFont('Arial', 30)
-        string_render = font.render(f'World Time:{self.world.world_time}, PGini: {gini[0]}, WGini: {gini[1]}',
-                                    True, (100, 100, 100))
+        if self.gini_cal:
+            string_render = font.render(f'World Time: {self.world.world_time}, PGini: {gini[0]},'
+                                        f' WGini: {gini[1]}, Top: {top}', True, (100, 100, 100))
+        else:
+            string_render = font.render(f'World Time: {self.world.world_time}', True, (100, 100, 100))
         string_display = string_render.get_rect()
         string_display.topleft = (0, 0)
         screen.blit(string_render, string_display)
@@ -93,8 +96,8 @@ class Animation:
     def pop_drawing(self, screen, width):
         for pos in self.entities.pos_pool:
             i, j = pos
-            coordinates = (j*width+width//2, i*width+width//2)
-            pygame.draw.circle(screen, (230, 100, 80), coordinates, width//3)
+            coordinates = (j * width + width // 2, i * width + width // 2)
+            pygame.draw.circle(screen, (230, 100, 80), coordinates, width // 3)
 
     def finish(self, screen):
         font = pygame.font.SysFont('Arial', 30)
@@ -103,6 +106,17 @@ class Animation:
         string_display = string_render.get_rect()
         string_display.topleft = (100, 100)
         screen.blit(string_render, string_display)
+
+    def get_top_ten(self):
+        num_pop = len(self.entities.pool)
+        num_top_10_percent = int(round(.1 * num_pop, 0))
+        assert num_top_10_percent > 0
+        wealth_list = []
+        for ent in self.entities.pool:
+            wealth_list.append(ent.wealth)
+        wealth_list.sort(reverse=True)
+        res = sum(wealth_list[0:num_top_10_percent + 1]) / sum(wealth_list)
+        return round(res, 3)
 
     def playing(self):
         self.data_saving_init()
@@ -119,7 +133,7 @@ class Animation:
         pygame.init()
         screen = pygame.display.set_mode((self.resolution, self.resolution))
         clock = pygame.time.Clock()
-        pygame.display.set_caption('The Great Sugar Empire')
+        pygame.display.set_caption('大唐帝国 | 张峻魁')
         # max_product = MathBehind.FindMaxValue.MaxFind(self.world.world_grid.matrix).find()
         max_product = 4
         index_cal = MathBehind.GiniCal.GinCalculator()
@@ -132,7 +146,7 @@ class Animation:
         self.draw_wealth.draw(self.entities)
         self.world_grid_drawing(max_product, screen, width)
         self.pop_drawing(screen, width)
-        self.strings_display(screen, _gini)
+        self.strings_display(screen, _gini, self.get_top_ten())
         pygame.display.update()
 
         is_paused = True
@@ -180,6 +194,6 @@ class Animation:
                     self.draw_wealth.draw(self.entities, self.world.world_time)
                 self.world_grid_drawing(max_product, screen, width)
                 self.pop_drawing(screen, width)
-                self.strings_display(screen, gini)
+                self.strings_display(screen, gini, top=self.get_top_ten())
 
                 pygame.display.update()

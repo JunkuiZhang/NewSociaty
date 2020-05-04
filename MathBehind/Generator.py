@@ -1,5 +1,4 @@
 class Generator:
-
     """
     用来生成world所需要的矩阵
     """
@@ -35,9 +34,9 @@ class Generator:
             row = []
             for j in range(self.dimension):
                 row.append({
-                'current_prod': 0,
-                'initial_prod': 0
-            })
+                    'current_prod': 0,
+                    'initial_prod': 0
+                })
             self.matrix.append(row)
 
     def insert_value(self, pos, key, value):
@@ -63,12 +62,12 @@ class Generator:
     def print_matrix(self):
         for i in range(self.dimension):
             s = str(self.matrix[i])
-            print(s[1:(len(s)-1)] + ', ')
+            print(s[1:(len(s) - 1)] + ', ')
 
 
 if __name__ == '__main__':
     g = Generator(5)
     print(g.print_matrix())
-    g.insert_value([0, 0], [0, 50, 1])
+    g.insert_value([0, 0], 'current_prod', 1)
     print(g.print_matrix())
     print(g.get_value([0, 0]))

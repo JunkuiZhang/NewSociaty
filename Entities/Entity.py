@@ -140,8 +140,8 @@ class Entity:
         return self.__delta_wealth
 
     @delta_wealth.setter
-    def delta_wealth(self, l):
-        self.__delta_wealth = l
+    def delta_wealth(self, value):
+        self.__delta_wealth = value
 
     @property
     def delta_wealth_indicator(self):
@@ -155,7 +155,7 @@ class Entity:
     def __str__(self):
         print('Entity status:')
         print('position: {}'.format((str(self.position))))
-        print('earning:{}'.format((str(self.world_grid[self.position[0]][self.position[1]][0]))))
+        print('earning:{}'.format((str(self.world.world_grid.get_value(self.position)['current_prod']))))
         print('eating:{}'.format((str(self.eating))))
         print('intelligence:{}'.format((str(self.intel))))
         return '======='
@@ -305,14 +305,11 @@ class Entity:
                 pos_pool.append(new_pos)
 
         # 初始化position list
-        position_list = []
+        position_list = [[self.world.world_grid.get_value(self.position)['current_prod'], self.position]]
         # position list形如[[a1, b1, [x1, y1]], ..., [an, bn, [xn, yn]]]
         # 其中a为格子产出，b为该格子是否存在其他个体，[x, y]为格子坐标
-        _x, _y = self.position
-        position_list.append([self.world.world_grid.get_value(self.position)['current_prod'], self.position])
         # 用来去重
-        position_pool = []
-        position_pool.append(self.position)
+        position_pool = [self.position]
         x_start, y_start = self.position[0] - self.intel, self.position[1] - self.intel
         x_end, y_end = self.position[0] + self.intel + 1, self.position[1] + self.intel + 1
         for i in range(x_start, x_end):

@@ -19,7 +19,7 @@ class DrawWealth:
     def draw(self, entities, world_time=0):
         data = self.get_data(entities)
         # pyplot.figure("The Great Sugar Empire | Figure")
-        pyplot.figure('大糖帝国')
+        pyplot.figure('大糖帝国 | 张峻魁 | 图1')
         pyplot.ion()
         pyplot.cla()
         pyplot.hist(data, 10)
@@ -31,12 +31,3 @@ class DrawWealth:
         pyplot.title(f'财富分布状况 | 时间：{world_time}')
         pyplot.grid(True)
         pyplot.pause(0.03)
-
-
-if __name__ == '__main__':
-    d = []
-    for i in range(0, 10):
-        for j in range(0, 10):
-            d.append(j)
-    data = pandas.DataFrame({'x':d})
-    p = (ggplot(data=data)+geom_bar(aes(x='x'))+xlab('Test'))
