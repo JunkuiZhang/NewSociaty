@@ -15,6 +15,10 @@ class Generator:
     def dimension(self):
         return self.__dimension
 
+    @dimension.setter
+    def dimension(self, value):
+        self.__dimension = value
+
     def generate(self):
         """
         初始化一定维度的矩阵
@@ -23,38 +27,38 @@ class Generator:
                   ...,
                   [[an1, bn1], [an2, bn2], ..., [ann, bnn]]]
                  这里a的值为格子产出（大于0的值），b的值为该格子是否存在个体（0没有，1有）
+
+                 2020-03 change log:
+                 [{'current_prod':a, 'initial_prod':c}]: 添加cn为世界当前格子的初始产出
         """
         for i in range(self.dimension):
             row = []
             for j in range(self.dimension):
-                row.append([0, 0])
+                row.append({
+                'current_prod': 0,
+                'initial_prod': 0
+            })
             self.matrix.append(row)
 
-    def insert_value(self, pos, num):
+    def insert_value(self, pos, key, value):
         """
         改变矩阵特定位置的值
         :param pos: 所需要改变的值的位置[x, y]
-        :param num: list变量，有且仅有[0, b, c]、[1, b], [2, c]三种情况
-                    [0, b, c]表示矩阵的两个值都需要改变，[1, b]表示仅改变格子的产出值，[2, c]表示仅改变格子是否被个体占据的值
+        :param key: 要更改的key
+        :param value: 要改的值
         :return: None
         """
-        if num[0] == 0:
-            self.matrix[pos[0]][pos[1]][0], self.matrix[pos[0]][pos[1]][1] = num[1], num[2]
-        elif num[0] == 1:
-            self.matrix[pos[0]][pos[1]][0] = num[1]
-        elif num[0] == 2:
-            self.matrix[pos[0]][pos[1]][1] = num[1]
-        else:
-            print('Wrong num indicator.')
-            raise ValueError
+        x, y = pos
+        self.matrix[x][y][key] = value
 
     def get_value(self, pos):
         """
         给出矩阵特定位置的值
         :param pos: [x, y]
-        :return: [a, b]，其中，a表示格子产出，b表示各自是否有个体占据
+        :return: [a, b, cn]，其中，a表示格子产出，b表示各自是否有个体占据,cn定义同上
         """
-        return self.matrix[pos[0]][pos[1]]
+        x, y = pos
+        return self.matrix[x][y]
 
     def print_matrix(self):
         for i in range(self.dimension):

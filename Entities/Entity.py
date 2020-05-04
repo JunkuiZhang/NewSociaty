@@ -4,7 +4,7 @@ import MathBehind.CoordinatesCal
 
 class Entity:
 
-    def __init__(self, world, position, eating, entity_id=-1, wealth=50, intelligence=1, alive=1, life_time=0,
+    def __init__(self, world, position, eating, entity_id=-1, wealth=50, intelligence=3, alive=1, life_time=0,
                  bravery=True, intel_mode=1, delta_wealth_indicator=True):
         # “世界”地图（矩阵），详见World
         # world(n by n) = [[[product, is_occupied], ..., [product, is_occupied]],
@@ -14,7 +14,6 @@ class Entity:
         #
         #     product: 大于0的float类型变量
         # is_occupied: 1表示有个体，0表示没有个体
-        self.__world_grid = world.world_grid.matrix
         # world object
         self.__world = world
         # 个体的唯一id
@@ -51,12 +50,12 @@ class Entity:
         self.__entity_id = num
 
     @property
-    def world_grid(self):
-        return self.__world_grid
-
-    @property
     def world(self):
         return self.__world
+
+    @world.setter
+    def world(self, value):
+        self.__world = value
 
     @property
     def position(self):
@@ -166,8 +165,8 @@ class Entity:
         dw1 = [dw0[1], dw0[2], value]
         self.delta_wealth = dw1
 
-    def delta_wealth_detector(self):
-        if self.world_grid[self.position[0]][self.position[1]][0] - self.eating_plus < 0:
+    def delta_wealth_detector(self, prod):
+        if prod - self.eating_plus < 0:
             return 0
         else:
             return 1
@@ -185,12 +184,15 @@ class Entity:
         5、判断个体存活状态
         :return:
         """
-        self.wealth += self.world_grid[self.position[0]][self.position[1]][0]
-        self.wealth -= self.eating_plus
+        current_prod = self.world.world_grid.get_value(self.position)['current_prod']
+        self.wealth += current_prod
+        self.world.world_grid.insert_value(self.position, 'current_prod', 0)
+        # self.wealth -= self.eating_plus
+        self.wealth -= self.eating
         self.life_time += 1
-        self.delta_wealth_changer(self.delta_wealth_detector())
-        self.eating_adjustment()
-        self.eating *= (1 + self.world.inflation)
+        self.delta_wealth_changer(self.delta_wealth_detector(current_prod))
+        # self.eating_adjustment()
+        # self.eating *= (1 + self.world.inflation)
         # print('Alive: {}'.format(str(self.alive)))
         # print('Basic eating: {}'.format(str(self.eating)))
         # print('Adj eating: {}'.format(str(self.eating_plus)))
@@ -200,7 +202,7 @@ class Entity:
         if self.wealth < 0:
             self.alive = 0
 
-    def move(self):
+    def move(self, pos_occupied):
         """
         个体下一步的移动决策：
         1、根据个体的能力不同，看到的范围不同，把视野内未超出世界范围的格子坐标及格子的产出加入position_list
@@ -218,7 +220,7 @@ class Entity:
             :param mode: 详见类变量说明
             :return: Boolean
             """
-            if cor[0] < 0 or cor[0] > len(self.world_grid[0]) - 1 or cor[1] < 0 or cor[1] > len(self.world_grid[0]) - 1:
+            if cor[0] < 0 or cor[0] > self.world.dimension - 1 or cor[1] < 0 or cor[1] > self.world.dimension - 1:
                 return False
             else:
                 if mode == 1:
@@ -243,19 +245,21 @@ class Entity:
             :return: 包含坐标的list类型，[x坐标, y坐标]
             """
             assert mode == 'max' or mode == 'min', 'Invalid mode parameter.'
-            res = [pl[0][0], pl[0][2]]
+            res = [pl[0][0], pl[0][1]]
             for pls in pl:
                 if mode == 'max':
-                    if pls[0] > res[0] and pls[1] == 0:
+                    if pls[0] > res[0]:
                         # 产出大于当前最优格子，且该格子无个体占据
-                        res = [pls[0], pls[2]]
+                        res = [pls[0], pls[1]]
                     else:
                         pass
                 elif mode == 'min':
-                    if pls[0] < res[0] and pls[1] == 0:
-                        res = [pls[0], pls[2]]
+                    if pls[0] < res[0]:
+                        res = [pls[0], pls[1]]
                     else:
                         pass
+                else:
+                    pass
             return res
 
         def need_of_bravery(pl, res):
@@ -268,10 +272,10 @@ class Entity:
 
             move = random.choice(pl)
             if res[0] == 0:
-                return True, move[2]
+                return True, move[1]
             elif delta_wealth_check(self.delta_wealth) and self.delta_wealth_indicator:
                 # 连续3期财富增量小于0，防止等死
-                return True, move[2]
+                return True, move[1]
             else:
                 return False, res[1]
 
@@ -287,35 +291,44 @@ class Entity:
             else:
                 return False
 
+        def is_occupied(pos):
+            if pos in pos_occupied:
+                return True
+            else:
+                return False
+
         def check_point(new_pos, pos_pool, pos_list):
-            if check_bond(new_pos) and not is_considered(new_pos, pos_pool):
-                pos_status = self.world_grid[new_pos[0]][new_pos[1]]
-                pos_list.append([pos_status[0], pos_status[1], new_pos])
+            # pool用来去重
+            if check_bond(new_pos) and not is_considered(new_pos, pos_pool) and not is_occupied(new_pos):
+                pos_status = self.world.world_grid.get_value(new_pos)
+                pos_list.append([pos_status['current_prod'], new_pos])
                 pos_pool.append(new_pos)
 
         # 初始化position list
         position_list = []
         # position list形如[[a1, b1, [x1, y1]], ..., [an, bn, [xn, yn]]]
         # 其中a为格子产出，b为该格子是否存在其他个体，[x, y]为格子坐标
-        position_list.append([self.world_grid[self.position[0]][self.position[1]][0], 0, self.position])
+        _x, _y = self.position
+        position_list.append([self.world.world_grid.get_value(self.position)['current_prod'], self.position])
         # 用来去重
         position_pool = []
         position_pool.append(self.position)
-        for i in range(self.intel + 1):
-            for j in range(self.intel + 1):
-                new_position = [self.position[0] - i, self.position[1] - j]
-                check_point(new_position, position_pool, position_list)
-                new_position = [self.position[0] - i, self.position[1] + j]
-                check_point(new_position, position_pool, position_list)
-                new_position = [self.position[0] + i, self.position[1] - j]
-                check_point(new_position, position_pool, position_list)
-                new_position = [self.position[0] + i, self.position[1] + j]
-                check_point(new_position, position_pool, position_list)
+        x_start, y_start = self.position[0] - self.intel, self.position[1] - self.intel
+        x_end, y_end = self.position[0] + self.intel + 1, self.position[1] + self.intel + 1
+        for i in range(x_start, x_end):
+            for j in range(y_start, y_end):
+                check_point([i, j], position_pool, position_list)
 
         position_move = move_find(position_list, 'max')
-        bravery, position_move = need_of_bravery(position_list, position_move)
-        self.world.world_grid.insert_value(self.position, [2, 0])
+        if self.bravery:
+            bravery, position_move = need_of_bravery(position_list, position_move)
+        else:
+            bravery, position_move = False, position_move[1]
         self.position = position_move
-        self.world.world_grid.insert_value(self.position, [2, 1])
+        assert self.position != 0
+
+        # debug
+        # print(f'Eating plus: {self.eating_plus}')
+        # print(f'Delta wealth: {self.delta_wealth}')
 
         return position_move

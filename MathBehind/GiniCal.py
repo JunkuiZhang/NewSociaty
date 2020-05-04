@@ -3,7 +3,7 @@ class GinCalculator:
     def __init__(self):
         pass
 
-    def calculate(self, entities_pool, world_grid_matrix):
+    def calculate(self, entities_pool, world_grid_matrix, decimal=3):
         delta_income = 0
         income_pool = []
         delta_wealth = 0
@@ -12,7 +12,7 @@ class GinCalculator:
         for _entity in entities_pool:
             if _entity.alive == 0:
                 continue
-            income = world_grid_matrix[_entity.position[0]][_entity.position[1]][0]
+            income = world_grid_matrix[_entity.position[0]][_entity.position[1]]['current_prod']
             income_pool.append(income)
             wealth_pool.append(_entity.wealth)
 
@@ -35,4 +35,4 @@ class GinCalculator:
         index_of_income = delta_income / (2 * mean_of_income)
         index_of_wealth = delta_wealth / (2 * mean_of_wealth)
 
-        return index_of_income, index_of_wealth
+        return round(index_of_income, decimal), round(index_of_wealth, decimal)

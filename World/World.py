@@ -5,8 +5,8 @@ import MathBehind.CoordinatesCal
 
 class World:
 
-    def __init__(self, dimension=50, resolution=600, random_seed=None, mountain_factor=.6, base_product=(100, 50),
-                 inflation=.05):
+    def __init__(self, dimension=50, resolution=600, random_seed=None, mountain_factor=.7, base_product=(100, 50),
+                 inflation=0, reproduce_num=1):
         # n by n的世界棋盘，默认为50X50
         self.__dimension = dimension
         # 画出棋盘时所用的分辨率
@@ -19,6 +19,7 @@ class World:
         self.__base_product = base_product
         # 通胀水平，每期增加个体的eating消耗
         self.__inflation = inflation
+        self.__reproduce_num = reproduce_num
         self.__world_grid = None
         self.__world_time = 0
         self.generating()
@@ -69,6 +70,14 @@ class World:
         self.__inflation = num
 
     @property
+    def reproduce_num(self):
+        return self.__reproduce_num
+
+    @reproduce_num.setter
+    def reproduce_num(self, value):
+        self.__reproduce_num = value
+
+    @property
     def world_grid(self):
         return self.__world_grid
 
@@ -84,17 +93,23 @@ class World:
     def world_time(self, num):
         self.__world_time = num
 
-    def population_position_insert(self, pop):
-        for entity in pop.pool:
-            if entity.alive == 1:
-                self.world_grid.insert_value(entity.position, [2, 1])
-            else:
-                pass
-
     def world_grid_clean(self):
         for row in self.world_grid.matrix:
             for col in row:
                 col[1] = 0
+
+    def world_reproduce(self):
+        for i in range(self.dimension):
+            for j in range(self.dimension):
+                initial_product = self.world_grid.get_value([i, j])['initial_prod']
+                current_product = self.world_grid.get_value([i, j])['current_prod']
+                if current_product < initial_product:
+                    if initial_product != 0:
+                        assert initial_product != current_product, '收割过程错误！'
+                    new_product = current_product + self.reproduce_num
+                    if new_product > initial_product:
+                        new_product = initial_product
+                    self.world_grid.insert_value([i, j], 'current_prod', new_product)
 
     def generating(self):
         # 检查是否设置了随机种子
@@ -123,19 +138,29 @@ class World:
                 if calculator.calculation([i, j], central_position) > mountain_semi_diameter:
                     # 不在糖山的范围内
                     continue
+                elif calculator.calculation([i, j], central_position) <= 2:
+                    product = 4
+                elif calculator.calculation([i, j], central_position) <= 2 + round(self.dimension*.07, 0):
+                    product = 3
+                elif calculator.calculation([i, j], central_position) <= 2 + round(self.dimension*.17, 0):
+                    product = 2
                 else:
-                    product = random.gauss(mu=self.base_product[0], sigma=self.base_product[1])
-                    # 若随机的产出小于0，则初始化为0
-                    if product < 0:
-                        continue
-                    # 距离糖山中心越近，产出越高，some factor为一个修正系数
-                    some_factor = .9
-                    product *= (abs(calculator.calculation([i, j], central_position)-mountain_semi_diameter)
-                                * some_factor)
-                    product = round(product, 2)
-                    self.world_grid.insert_value([i, j], [1, product])
+                    product = 1
+                self.world_grid.insert_value([i, j], 'current_prod', product)
+                self.world_grid.insert_value([i, j], 'initial_prod', product)
+                # else:
+                #     product = random.gauss(mu=self.base_product[0], sigma=self.base_product[1])
+                #     # 若随机的产出小于0，则初始化为0
+                #     if product < 0:
+                #         continue
+                #     # 距离糖山中心越近，产出越高，some factor为一个修正系数
+                #     some_factor = .9
+                #     product *= (abs(calculator.calculation([i, j], central_position) - mountain_semi_diameter)
+                #                 * some_factor)
+                #     product = round(product, 2)
+                #     self.world_grid.insert_value([i, j], [1, product])
 
 
 if __name__ == '__main__':
-    w = World(20)
+    w = World(dimension=50)
     w.world_grid.print_matrix()
